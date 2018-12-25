@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.SystemsMapper">
+    <sql id="whereSelectiveSql">
+		<if test="systemId != null and systemId != '' "> and `systemId` = #{systemId}</if>
+		<if test="systemName != null and systemName != '' "> and `systemName` like concat('%',#{systemName},'%')</if>
+		<if test="pin != null and pin != '' "> and `pin` = #{pin}</if>
+    </sql>
+	<sql id="Base_Column_List">
+		id,systemId,systemName,domainName,domainParam,ip,remark,updateTime,createTime
+	</sql>
+
+	<select id="queryObject" resultType="com.bittest.platform.bg.domain.po.Systems">
+		select <include refid="Base_Column_List" /> from systems where systemId = #{systemId}
+	</select>
+
+	<select id="queryList" resultType="com.bittest.platform.bg.domain.po.Systems">
+		select
+			<include refid="Base_Column_List" />
+		from systems
+        where 1=1
+			<include refid="whereSelectiveSql" />
+			<if test="startNo != null and  pageSize != null">
+				limit #{startNo}, #{pageSize}
+			</if>
+	</select>
+
+	<select id="querySystemList" resultType="com.bittest.platform.bg.domain.po.Systems">
+		select
+			<include refid="Base_Column_List" />
+			from systems
+		where 1=1
+			and pin = #{pin} order by id desc
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(1) from systems
+        where 1=1
+        <include refid="whereSelectiveSql" />
+	</select>
+
+	<insert id="save" parameterType="com.bittest.platform.bg.domain.po.Systems">
+		insert into systems
+		(`systemId`,`systemName`,`domainName`,`domainParam`,`ip`,`pin`,`remark`,`updateTime`,`createTime`)
+		values
+        (
+    	#{systemId}
+    	,	#{systemName}
+    	,   #{domainName}
+    	,   #{domainParam}
+    	,   #{ip}
+    	,	#{pin}
+    	,	#{remark}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+	<update id="update" parameterType="com.bittest.platform.bg.domain.po.Systems">
+		update systems
+		<set>
+			`systemName` = #{systemName},
+			`domainName` = #{domainName},
+			`domainParam` = #{domainParam},
+			`ip` = #{ip},
+			`remark` = #{remark},
+			`updateTime` = now()
+		</set>
+		where `systemId` = #{systemId}
+	</update>
+
+	<delete id="delete">
+		delete from systems where systemId = #{systemId}
+	</delete>
+
+
+</mapper>

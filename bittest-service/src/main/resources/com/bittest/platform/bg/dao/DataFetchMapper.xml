@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bittest.platform.bg.dao.DataFetchMapper" >
+
+  <sql id="Base_Column_List" >
+    dataFetchId,
+    caseId,
+    interfaceId,
+    paramName,
+    regular,
+    regularIndex,
+    pin,
+    updateTime,
+    createTime
+  </sql>
+
+
+
+  <sql id="whereSelectiveSql">
+     `caseId` = #{caseId} and `interfaceId` = #{interfaceId}
+  </sql>
+
+  <insert id="save" parameterType="com.bittest.platform.bg.domain.po.CaseInfo" >
+    insert into datafetch (
+      <include refid="Base_Column_List" />
+    )
+    values (
+      #{dataFetchId},
+      #{caseId},
+      #{interfaceId},
+      #{paramName},
+      #{pin},
+      #{regular},
+      #{regularIndex},
+      now(),
+      now()
+    )
+  </insert>
+
+  <delete id="delete">
+    delete
+      from
+        datafetch
+    where
+      dataFetchId = #{dataFetchId} and pin = #{pin}
+  </delete>
+
+  <update id="update" parameterType="caseInfo">
+    UPDATE
+      datafetch
+    <set>
+      <if test="paramName != null">`paramName` = #{paramName}, </if>
+      <if test="regular != null">`regular` = #{regular}, </if>
+      updateTime = now()
+    </set>
+    WHERE
+      datafetchId = #{datafetchId}
+  </update>
+
+
+  <select id="queryList" resultType="caseInfo" parameterType="caseInfo" >
+    select
+      <include refid="Base_Column_List" />
+    from
+      datafetch
+    where 1=1
+      <include refid="whereSelectiveSql"/>
+  </select>
+
+</mapper>

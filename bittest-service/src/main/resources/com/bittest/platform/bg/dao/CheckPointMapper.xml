@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.CheckPointMapper">
+    <sql id="whereSelectiveSql">
+		`caseId` = #{caseId}
+		 and `pin` = #{pin}
+		 and `interfaceId` = #{interfaceId}
+    </sql>
+	<sql id="Base_Column_List">
+		checkId,caseId,interfaceId,checkMethod,checkType,checkValue,columns,wheres,tableName,databaseId,pin,updateTime,createTime
+	</sql>
+
+	<select id="queryObject" resultType="com.bittest.platform.bg.domain.po.CheckPoint">
+		select
+			<include refid="Base_Column_List" />
+		from
+			checkpoint
+		where
+			checkId = #{checkId} and pin = #{pin}
+	</select>
+
+	<select id="queryList" resultType="com.bittest.platform.bg.domain.po.CheckPoint">
+		select <include refid="Base_Column_List" />
+			from checkpoint
+        where 1=1
+        <include refid="whereSelectiveSql" />
+	</select>
+
+ 	<!--<select id="queryTotal" resultType="int">-->
+		<!--select count(1) from checkpoint-->
+        <!--where 1=1-->
+        <!--<include refid="whereSelectiveSql" />-->
+	<!--</select>-->
+
+	<insert id="save" parameterType="com.bittest.platform.bg.domain.po.CheckPoint">
+		insert into checkpoint
+		(
+			<include refid="Base_Column_List"/>
+		)
+		values
+        (
+		    #{checkId}
+		,	#{caseId}
+    	,	#{interfaceId}
+    	,	#{checkMethod}
+    	,	#{checkType}
+    	,	#{checkValue}
+		,	#{columns}
+		,	#{wheres}
+		,	#{tableName}
+		,	#{databaseId}
+		,	#{pin}
+		,	now()
+		,	now()
+    )
+	</insert>
+
+	<update id="update" parameterType="com.bittest.platform.bg.domain.po.CheckPoint">
+		update checkpoint
+		<set>
+			<if test="interfaceId != null">`interfaceId` = #{interfaceId}, </if>
+			<if test="checkMethod != null">`checkMethod` = #{checkMethod}, </if>
+			<if test="checkType != null">`checkType` = #{checkType}, </if>
+			<if test="checkValue != null">`checkValue` = #{checkValue},</if>
+			<if test="columns != null">`columns` = #{columns},</if>
+			<if test="where != null">`where` = #{where},</if>
+			<if test="tableName != null">`tableName` = #{tableName},</if>
+			<if test="databaseId != null">`databaseId` = #{databaseId},</if>
+			`updateTime` = now()
+		</set>
+		where checkId = #{checkId} and pin = #{pin}
+	</update>
+
+	<delete id="delete" parameterType="com.bittest.platform.bg.domain.po.CheckPoint">
+		delete from checkpoint where checkId = #{checkId} and pin = #{pin}
+	</delete>
+
+
+</mapper>

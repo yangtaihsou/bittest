@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7c53ba29-7dc8-4d32-8e89-46e3cf88213e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="date" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="uuid" class="java.lang.String"/>
+	<field name="companyId" class="java.lang.String"/>
+	<field name="account" class="java.lang.String"/>
+	<field name="itemCode" class="java.lang.String"/>
+	<field name="itemName" class="java.lang.String"/>
+	<field name="valuationDate" class="java.util.Date"/>
+	<field name="num" class="java.math.BigDecimal"/>
+	<field name="unitCost" class="java.math.BigDecimal"/>
+	<field name="totalCost" class="java.math.BigDecimal"/>
+	<field name="costRate" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement uuid="6f56a512-7a8d-42cb-9775-4255436fed42" x="71" y="38" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b5e2ee5f-dee9-431b-9f6a-731e24a13d57" x="13" y="39" width="55" height="20"/>
+				<textElement/>
+				<text><![CDATA[估值日期：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0e58c8f5-c8c4-4fb1-b384-860326bb2dcf" x="209" y="16" width="156" height="24"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[资产负债估值表]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="47" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="9eb70233-a040-426f-8758-e7ba8665def1" x="132" y="2" width="173" height="20"/>
+				<textElement/>
+				<text><![CDATA[科目名称]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="85ef6835-db90-41d7-8e3b-bc10d241c119" x="325" y="1" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[成本]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="85ef6835-db90-41d7-8e3b-bc10d241c119" x="440" y="3" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[成本占净值]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c6e33ec-7717-46d0-a4b3-13eb97b1471d" x="22" y="1" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[科目代码]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="61" splitType="Stretch">
+			<textField>
+				<reportElement uuid="8f36ed23-d0c7-4622-9aa4-ba5b99a86fa3" x="21" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{itemCode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1e4bf3ac-35a1-4e75-9126-ec53739de7d5" x="132" y="1" width="173" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{itemName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ce1008db-589f-4e62-bd2d-527d76cad305" x="325" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{totalCost}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7e6344a1-59df-4cbe-8442-ad8cbaa77a91" x="439" y="1" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{costRate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh>
+
+	<!-- 登陆页 -->
+	<mapping path="/index*" decorator="/decorators/index.jsp" />
+	
+	<!-- 列表页 -->
+	<mapping path="/*List" decorator="/decorators/list.jsp" />
+	<mapping path="/**/*List" decorator="/decorators/list.jsp" />
+	<mapping path="/**/*Detail" decorator="/decorators/form.jsp" />
+	<mapping path="/**/*Info" decorator="/decorators/form.jsp" />
+	<mapping path="/**/*Edit" decorator="/decorators/form.jsp" />
+	<mapping path="/**/*Add" decorator="/decorators/form.jsp" />
+	<!--单接口测试-->
+	<mapping path="/**/*Test" decorator="/decorators/form.jsp" />
+	<!-- chart -->
+	<mapping path="/**/*chart" decorator="/decorators/chart.jsp" />
+	<!--新标签页  -->
+	<mapping path="/**/*complex" decorator="/decorators/complex.jsp" />
+	
+	<!-- 静态资源 -->
+	<mapping path="/static/*" exclude="true"/>
+	<!-- 向页面返回json数据 -->
+	<mapping path="/**/*ListData" exclude="true"/>
+
+	<!-- 自定义标签，加入页脚 --> 
+<!--	<content-processor>
+		<tag-rule-bundle class="FooterTagRuleBundle" />
+	</content-processor>-->
+	
+
+
+</sitemesh>

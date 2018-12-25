@@ -1,0 +1,18 @@
+BOARD_HOST="ec2-52-78-244-41.ap-northeast-2.compute.amazonaws.com"
+ACCESS_KEY_ALPHA="/root/pems/alpha-access-pay.pem"
+WAR_PATH="/root/.jenkins/workspace/bittest/bittest-front/target/"
+WAR_FILE="bittest-web.war"
+BOARD_TEMP_PATH="~/tmp/"
+DEST_WEBAPP_PATH="/opt/tomcat/webapps/"
+WEB_HOSTS_ALPHA="10.0.1.147"
+
+ echo "deploy alpha started..."
+ echo "start to scp: ${WAR_PATH}${WAR_FILE} centos@${BOARD_HOST}:${BOARD_TEMP_PATH} "
+  scp -i $ACCESS_KEY_ALPHA ${WAR_PATH}${WAR_FILE} centos@${BOARD_HOST}:${BOARD_TEMP_PATH}
+  echo start to scp war to dest host""
+  for h in $WEB_HOSTS_ALPHA;do
+    echo "deploy dest host $h"
+    ssh -i $ACCESS_KEY_ALPHA centos@${BOARD_HOST} \
+        "scp -i pems/alpha-access-pay.pem ${BOARD_TEMP_PATH}${WAR_FILE} ${h}:${DEST_WEBAPP_PATH}ROOT.war"
+  done
+  echo "deploy alpha done"

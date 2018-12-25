@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.TaskCaseRelastionMapper">
+
+	<insert id="save" parameterType="com.bittest.platform.bg.domain.po.TaskCaseRelastion" useGeneratedKeys="true" keyProperty="id">
+		insert into task_case_relastion
+			(`taskId`,`caseId`,`updateTime`,`createTime`)
+		values
+        (
+			#{taskId}
+    	,	#{caseId}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+	<update id="update" parameterType="com.bittest.platform.bg.domain.po.TaskCaseRelastion">
+		update task_case_relastion
+		<set>
+			`status` = #{status},
+			`updateTime` = now()
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="com.bittest.platform.bg.domain.po.TaskCaseRelastion">
+		delete
+		from
+			task_case_relastion
+		where
+			taskId=#{taskId}
+		 	and caseId=#{caseId}
+	</delete>
+
+	<delete id="deleteByTask" parameterType="com.bittest.platform.bg.domain.po.TaskCaseRelastion">
+		delete
+		from
+		task_case_relastion
+		where
+		taskId=#{taskId}
+	</delete>
+
+	<select id="queryCaseUseTotal" parameterType="com.bittest.platform.bg.domain.po.TaskCaseRelastion" resultType="int">
+		select
+			count(1)
+		from
+			task_case_relastion
+		WHERE
+			1=1
+			and caseId = #{caseId}
+	</select>
+</mapper>

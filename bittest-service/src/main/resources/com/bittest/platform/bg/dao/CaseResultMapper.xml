@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.CaseResultMapper">
+
+    <sql id="whereSelectiveSql">
+
+        <if test="resultId != null and resultId != '' ">and `resultId` = #{resultId} </if>
+        <if test="caseId != null and caseId != '' ">and `caseId` = #{caseId} </if>
+        <if test="sysId != null and sysId != '' ">and `sysId` = #{sysId} </if>
+        <if test="result != null and result != 0 ">and `result` = #{result} </if>
+        <if test="caseName != null and caseName != '' ">
+            and `caseName` like concat('%',#{caseName},'%')
+        </if>
+    </sql>
+    <sql id="Base_Column_List">
+        resultId,taskId,caseId,caseName,caseParam,sysId,systemName,result,createTime
+    </sql>
+
+    <select id="queryObject" resultType="com.bittest.platform.bg.domain.po.CaseResult">
+        select
+          <include refid="Base_Column_List"/>
+        from case_result where resultId = #{resultId}  and caseId = #{caseId}
+    </select>
+
+    <select id="queryList" resultType="com.bittest.platform.bg.domain.po.CaseResult">
+        select
+          resultId,taskId,caseId,caseName,caseParam,sysId,result,case_result.createTime,systemName
+        from
+          case_result
+        where pin = #{pin}
+        <include refid="whereSelectiveSql"/>
+
+        order by id desc
+        <if test="startNo != null and  pageSize != null">
+            limit #{startNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from case_result
+        where  pin = #{pin}
+        <include refid="whereSelectiveSql"/>
+    </select>
+
+    <insert id="save" parameterType="com.bittest.platform.bg.domain.po.CaseResult">
+		insert into case_result
+		(
+		  `resultId`,`taskId`,`caseId`,`caseName`,`caseParam`,`sysId`,`systemName`,`result`,`pin`,`createTime`
+		)
+		values
+        (
+    	    #{resultId}
+        ,   #{taskId}
+    	,	#{caseId}
+    	,	#{caseName}
+    	,	#{caseParam}
+    	,	#{sysId}
+    	,	#{systemName}
+    	,	#{result}
+    	,   #{pin}
+    	,	now()
+    )
+	</insert>
+
+    <delete id="delete" parameterType="com.bittest.platform.bg.domain.po.CaseResult">
+		delete
+        from
+          case_result
+        where
+          1=1
+          and `resultId` = #{resultId}
+          and pin =#{pin}
+	</delete>
+
+    <delete id="deleteByTask" parameterType="com.bittest.platform.bg.domain.po.CaseResult">
+        delete
+        from
+        case_result
+        where
+          1=1
+          and `taskId` = #{taskId}
+          and pin =#{pin}
+    </delete>
+
+</mapper>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bittest.platform.bg.dao.CaseInfoMapper" >
+
+  <sql id="Base_Column_List" >
+    id,
+    caseId,
+    caseName,
+    caseParam,
+    sysId,
+    remark,
+    status,
+    pin,
+    updatetime,
+    createtime
+  </sql>
+
+
+
+  <sql id="whereSelectiveSql">
+    <if test="caseName != null and caseName != '' ">
+      and `caseName` like concat('%',#{caseName},'%')
+    </if>
+    <if test="sysId !=null and sysId !=''">and `sysId` = #{sysId} </if>
+    <if test="status != null">and `status` = #{status}</if>
+  </sql>
+
+  <insert id="save" parameterType="com.bittest.platform.bg.domain.po.CaseInfo" >
+    insert into caseinfo (
+    caseId,
+    caseName,
+    caseParam,
+    sysId,
+    remark,
+    pin,
+    updatetime,
+    createtime
+    )
+    values (
+    #{caseId},
+    #{caseName},
+    #{caseParam},
+    #{sysId},
+    #{remark},
+    #{pin},
+    now(),
+    now()
+    )
+  </insert>
+
+  <delete id="delete">
+    delete from caseinfo
+    where
+    caseid = #{caseId}
+  </delete>
+
+  <update id="update" parameterType="caseInfo">
+    UPDATE caseinfo
+
+    <set>
+      <if test="caseName != null and caseName!=''">caseName=#{caseName},</if>
+      <if test="sysId != null">sysId = #{sysId}, </if>
+      <if test="status != null">status = #{status}, </if>
+      caseParam = #{caseParam},
+      remark = #{remark},
+      updateTime = now()
+    </set>
+    WHERE
+        caseId = #{caseId}
+  </update>
+
+  <select id="queryObject" resultType="caseInfo" parameterType="caseInfo" >
+    select
+      <include refid="Base_Column_List" />
+    from caseinfo
+    where
+    caseId = #{caseId}
+  </select>
+
+  <select id="queryList" resultType="caseInfo" parameterType="caseInfo" >
+    select
+      c.caseId,
+      c.caseName,
+      c.caseParam,
+      c.sysId,
+      c.remark,
+      s.systemName,
+      c.updatetime,
+      c.createtime
+    from caseinfo c,systems s
+    where 1=1
+    and c.sysId = s.systemId
+    and c.pin = #{pin}
+    <if test="sysId!=null and sysId!=''"> and sysId = #{sysId} </if>
+    <include refid="whereSelectiveSql"/>
+    <if test="startNo != null and  pageSize != null">
+      order by c.id desc
+      limit #{startNo}, #{pageSize}
+    </if>
+  </select>
+
+
+  <select id="queryTotal" resultType="int">
+    select count(1) from caseinfo c,systems s
+    where 1=1
+    and c.sysId = s.systemId
+    and c.pin = #{pin}
+    <if test="sysId!=null and sysId!=''"> and sysId = #{sysId} </if>
+    <include refid="whereSelectiveSql"/>
+  </select>
+
+
+  <select id="queryCaseTotal" resultType="int">
+    select count(1) from caseinfo
+  </select>
+
+
+  <select id="queryCaseInfoPageNoFetch" resultType="caseInfo" parameterType="caseInfo" >
+    select
+      temp.caseId,
+      temp.caseName,
+      temp.sysId,
+      temp.updatetime,
+      temp.createtime,
+      systemName
+    from (
+        SELECT
+            c.caseId,
+            c.caseName,
+            c.sysId,
+            c.updatetime,
+            c.createtime
+        FROM
+            caseinfo c
+        LEFT JOIN (
+            SELECT
+                caseid
+            FROM
+                task_case_relastion
+            WHERE
+                taskId = #{taskId}
+            ) r
+        ON c.caseId = r.caseId
+        WHERE
+            c.pin = #{pin}
+        AND r.caseid IS NULL
+        <if test="caseName!=null and caseName!=''"> and `caseName` like concat('%',#{caseName},'%') </if>
+        ) temp,systems
+    where
+        sysId=systemId
+        <if test="sysId!=null and sysId!=''"> AND sysId=#{sysId} </if>
+    order by id desc
+        <if test="startNo != null and  pageSize != null">
+          limit #{startNo}, #{pageSize}
+        </if>
+  </select>
+
+
+  <select id="queryCaseInfoPageNoFetchTotal" resultType="int" parameterType="caseInfo" >
+    SELECT
+      count(1)
+    FROM
+      caseinfo c
+        LEFT JOIN (
+          SELECT
+            caseid
+          FROM
+            task_case_relastion
+          WHERE
+            taskId = #{taskId}
+        ) r
+    ON c.caseId = r.caseId
+    WHERE
+      c.pin = #{pin}
+      AND r.caseid IS NULL
+      <if test="caseName!=null and caseName!=''"> and `caseName` like concat('%',#{caseName},'%') </if>
+      <if test="sysId!=null and sysId!=''"> and `sysId`=${sysId}</if>
+  </select>
+
+  <select id="queryCaseListByTask" resultType="caseInfo" parameterType="caseInfo" >
+    select
+      c.caseId,
+      t.taskId,
+      c.caseName,
+      c.caseParam,
+      c.sysId,
+      c.remark,
+      c.status,
+      c.updatetime,
+      c.pin,
+      c.createtime,
+      s.systemName
+    from
+      caseinfo c ,task_case_relastion t,systems s
+    where
+      t.caseId = c.caseId
+      and c.sysId = s.systemId
+      and t.taskId = #{taskId}
+    <if test="status != null"> and t.status = #{status} </if>
+    <if test="caseName!=null and caseName!=''"> and `caseName` like concat('%',#{caseName},'%') </if>
+    <if test="sysId!=null and sysId!=''"> and c.sysId = #{sysId} </if>
+    <if test="startNo != null and  pageSize != null">
+      order by t.id desc
+      limit #{startNo}, #{pageSize}
+    </if>
+  </select>
+
+
+  <select id="queryCaseTotalByTask" resultType="int">
+    select
+      count(1)
+    from caseinfo c ,task_case_relastion t
+    where t.caseId = c.caseId and t.taskId = #{taskId}
+    <if test="status != null"> and t.status = #{status} </if>
+    <if test="sysId!=null and sysId!=''"> and c.sysId = #{sysId} </if>
+    <if test="caseName!=null and caseName!=''"> and `caseName` like concat('%',#{caseName},'%') </if>
+  </select>
+
+  <select id="queryCaseBySystemTotal" resultType="int">
+    select
+      count(1)
+    from
+      caseinfo
+    where
+      sysId = #{sysId}
+  </select>
+
+  <select id="queryCaseChart" resultType="caseInfo" parameterType="caseInfo">
+    SELECT
+        systemName,
+        count(caseId) as caseCount
+    FROM
+        systems
+    LEFT JOIN
+        caseinfo
+        ON sysId = systemId
+    where systems.pin = #{pin}
+    GROUP BY
+	    systemId
+  </select>
+
+  <select id="queryCaseByName" resultType="caseInfo" parameterType="caseInfo">
+      select
+          caseId,caseName
+      from
+          caseinfo
+      WHERE
+          pin = #{pin}
+          <if test="caseName != null and caseName != ''">
+             and `caseName` like concat('%',#{caseName},'%')
+          </if>
+  </select>
+
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bittest.platform.bg.dao.CountInfoMapper" >
+
+  <sql id="whereSelectiveSql">
+    <if test="pin != null and pin != '' ">
+      and `pin` = #{pin}
+    </if>
+  </sql>
+
+  <select id="queryCounInfotListByPage" resultType="countInfo" parameterType="countInfo" >
+    select sum(taskCount) taskCount ,sum(caseCount) caseCount,sum(interfaceCount) interfaceCount,sum(systemCount) systemCount,pin from (
+      select count(1) as taskCount ,0 as caseCount,0 as interfaceCount,0 as systemCount,pin from task where 1=1
+      <include refid="whereSelectiveSql"/>
+      group by pin
+      union
+      select 0 as taskCount ,count(1) as caseCount,0 as interfaceCount,0 as systemCount,pin from caseinfo where 1=1
+      <include refid="whereSelectiveSql"/>
+      group by pin
+      union
+      select 0 as taskCount ,0 as caseCount,count(1) as interfaceCount,0 as systemCount,pin from interface where 1=1
+      <include refid="whereSelectiveSql"/>
+      group by pin
+      union
+      select 0 as taskCount ,0 as caseCount,0 as interfaceCount,count(1) as systemCount,pin from systems where 1=1
+      <include refid="whereSelectiveSql"/>
+      group by pin
+    ) temp group by pin
+    <if test="startNo != null and  pageSize != null">
+      limit #{startNo}, #{pageSize}
+    </if>
+  </select>
+
+
+  <select id="queryCounInfotCount" resultType="int">
+    select count(1) from (
+    select count(1) from (
+    select count(1) as taskCount ,0 as caseCount,0 as interfaceCount,0 as systemCount,pin from task where 1=1
+    <include refid="whereSelectiveSql"/>
+    group by pin
+    union
+    select 0 as taskCount ,count(1) as caseCount,0 as interfaceCount,0 as systemCount,pin from caseinfo where 1=1
+    <include refid="whereSelectiveSql"/>
+    group by pin
+    union
+    select 0 as taskCount ,0 as caseCount,count(1) as interfaceCount,0 as systemCount,pin from interface where 1=1
+    <include refid="whereSelectiveSql"/>
+    group by pin
+    union
+    select 0 as taskCount ,0 as caseCount,0 as interfaceCount,count(1) as systemCount,pin from systems where 1=1
+    <include refid="whereSelectiveSql"/>
+    group by pin
+    ) temp group by pin ) ttt
+  </select>
+
+
+</mapper>

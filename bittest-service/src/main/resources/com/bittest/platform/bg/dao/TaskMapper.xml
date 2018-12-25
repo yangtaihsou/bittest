@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.TaskMapper">
+    <sql id="whereSelectiveSql">
+        <if test="taskId != null and taskId != '' ">and `taskId` = #{taskId} </if>
+        <if test="pin != null and pin != '' "> and task.pin = #{pin} </if>
+        <if test="sysId != null and sysId != '' ">and `sysId` = #{sysId} </if>
+        <if test="taskName != null and taskName != '' ">
+            and `taskName` like concat('%',#{taskName},'%')
+        </if>
+        <if test="status != null">and `status` = #{status}</if>
+    </sql>
+
+    <sql id="Base_Column_List">
+          id,taskId,taskName,taskParam,sysId,pin,status,updateTime,createTime,remark
+    </sql>
+
+    <select id="queryObject" resultType="task">
+        select
+        <include refid="Base_Column_List"/>
+        from task where taskId = #{taskId}
+    </select>
+
+    <select id="queryList" resultType="task">
+        select
+           taskId,taskName,systemName as sysName,task.updateTime,task.createTime
+        from task,systems
+        where 1=1 and sysId = systemId
+        <include refid="whereSelectiveSql"/>
+        order by task.id desc
+        <if test="startNo != null and  pageSize != null">
+            limit #{startNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from task
+        where 1=1
+        <include refid="whereSelectiveSql"/>
+    </select>
+
+    <insert id="save" parameterType="task">
+		insert into task
+		(`taskId`,`taskName`,`taskParam`,`sysId`,`pin`,`remark`,`updateTime`,`createTime`)
+		values
+        (
+	        #{taskId}
+    	,	#{taskName}
+    	,	#{taskParam}
+    	,   #{sysId}
+    	,	#{pin}
+    	,	#{remark}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+    <update id="update" parameterType="task">
+        update task
+        <set>
+            `remark` = #{remark},
+            `sysId`  = #{sysId},
+            `taskName` = #{taskName},
+            <if test="taskParam != null">`taskParam` = #{taskParam},</if>
+            <if test="status != null">`status` = #{status},</if>
+            `updateTime` = now()
+        </set>
+        where taskId = #{taskId}
+    </update>
+
+    <delete id="delete">
+		delete from task where taskId = #{taskId}
+	</delete>
+
+</mapper>

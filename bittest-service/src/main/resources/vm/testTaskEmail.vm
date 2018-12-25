@@ -1,0 +1,170 @@
+
+<table width="744" style="width: 828px;"  border="1" cellspacing="0">
+    <colgroup>
+        <col width="264" style=";width:264px"/>
+        <col width="193" span="6" style=";width:193px"/>
+    </colgroup>
+    <tbody>
+        <tr style=";height:54px" class="firstRow">
+            <td colspan="7" >
+                <strong>测试结果</strong>
+            </td>
+        </tr>
+        <tr style=";height:29px">
+            <td width="145">
+                <strong>任务编号</strong>
+            </td>
+            <td width="145">
+                <strong>任务结果名称</strong>
+            </td>
+            <td width="145">
+                <strong>任务执行结果编号</strong>
+            </td>
+            <td width="145">
+                <strong>执行时间</strong>
+            </td>
+            <td width="163">
+                <strong>结束时间</strong>
+            </td>
+            <td width="149">
+                <strong>执行状态</strong>
+            </td>
+            <td width="227">
+              <strong>成功率</strong>
+            </td>
+        </tr>
+        <tr style=";height:29px">
+            <td width="145">
+                $!{taskResult.taskId}
+            </td>
+            <td width="145">
+                $!{taskResult.resultName}
+            </td>
+            <td width="145">
+                $!{taskResult.resultId}
+            </td>
+            <td width="145">
+                $!{taskResult.createTimeStr}
+            </td>
+            <td width="163">
+                $!{taskResult.updateTimeStr}
+            </td>
+            <td width="149">
+                $!{taskResult.isFinishStr}
+            </td>
+            <td width="227">
+              <span style="color: rgb(255, 0, 0);">
+                  $!{taskResult.successRate}%
+                  </span>
+            </td>
+        </tr>
+
+         #foreach($caseResult in $caseResultVoList)
+          <tr  >
+                     <td width="163">
+                         <strong>用例编号</strong>
+                     </td>
+                     <td colspan="1">
+                         <strong>用例名称</strong>
+                     </td>
+                     <td width="163">
+                         <strong>用例执行结果编号</strong>
+                     </td>
+                     <td width="145">
+                         <strong style="white-space: normal;">用时</strong>
+                     </td>
+                     <td width="227">
+                         <strong>所属系统</strong>
+                     </td>
+                     <td width="163">
+                         <strong>结果</strong>
+                     </td>
+                    <td ><strong>成功率</strong></td>
+                 </tr>
+        <tr  >
+            <td width="149">
+                $!{caseResult.caseId}
+            </td>
+            <td colspan="1">
+                $!{caseResult.caseName}
+            </td>
+            <td width="149">
+                $!{caseResult.resultId}
+            </td>
+            <td width="163">
+                $!{caseResult.exeTime}秒
+            </td>
+            <td width="undefined">
+                $!{caseResult.systemName}
+            </td>
+            <td width="undefined">
+                #if( ${caseResult.result}==1)
+          <span style="color: rgb(0, 176, 80);">
+                成功
+                </span>
+                #end
+                #if( ${caseResult.result}==2)
+              <span style="color: rgb(255, 0, 0);">
+                失败
+                </span>
+                #end
+            </td>
+            <td  >
+              <span style="color: rgb(255, 0, 0);">
+                $!{caseResult.successRate}%
+                </span>
+                </td>
+        </tr>
+        <tr>
+            <td  colspan="1"></td>
+            <td >
+                <span style="color: rgb(0, 176, 80);">接口编号</span>
+            </td>
+            <td >
+                <span style="color: rgb(0, 176, 80);">接口名字</span>
+            </td>
+            <td  colspan="2">
+                <span style="color: rgb(0, 176, 80);">执行结果(失败时)</span>
+            </td>
+            <td >
+                <span style="color: rgb(0, 176, 80);">用时</span>
+            </td>
+            <td >
+                <span style="color: rgb(0, 176, 80);">结果</span>
+            </td>
+        </tr>
+         #foreach($interfaceResult in ${interfaceResultMap.get($caseResult.caseId)})
+        <tr>
+            <td colspan="1"></td>
+            <td >
+                $!{interfaceResult.interfaceId}
+            </td>
+            <td >
+                $!{interfaceResult.name}
+            </td>
+            <td style="word-break: break-all;" width="149"  colspan="2">
+             #if( ${interfaceResult.result}==2)
+                $!{interfaceResult.resBody}
+               #end
+            </td>
+            <td >
+                $!{interfaceResult.exeTime}秒
+            </td>
+            <td >
+          #if( ${interfaceResult.result}==1)
+          <span style="color: rgb(0, 176, 80);">
+          成功
+            </span>
+           #end
+                #if( ${interfaceResult.result}==2)
+            <span style="color: rgb(255, 0, 0);">
+                失败
+                </span>
+                 #end
+            </td>
+        </tr>
+        #end
+
+        #end
+    </tbody>
+</table>

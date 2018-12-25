@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.InterfaceCollectionMapper">
+    <sql id="whereSelectiveSql">
+		and `pin` = #{pin}
+		<if test="name!=null and name!=''">
+		and `name` like CONCAT('%',#{name},'%')
+		</if>
+    </sql>
+	<sql id="Base_Column_Obj">
+		id,interfaceId,`name`,token,pin,url,head,ip,alias,body,method,`type`
+	</sql>
+
+	<sql id="Base_Column_List">
+		interfaceId,`name`,`type`
+	</sql>
+
+	<select id="queryObject" resultType="interfaceCollection">
+		select
+			<include refid="Base_Column_Obj" />
+		from
+			interface_collection
+		where
+		   	interfaceId = #{interfaceId}
+	</select>
+
+	<select id="queryList" resultType="interfaceCollection">
+		select
+			`name`,
+			`type`,
+			`interfaceId`
+		from interface_collection
+        where 1=1
+        <include refid="whereSelectiveSql" />
+	</select>
+
+
+	<insert id="save" parameterType="interfaceCollection" useGeneratedKeys="true" keyProperty="id">
+		insert into interface_collection
+		(`interfaceId`,`pin`,`name`,`url`,`head`,`ip`,`alias`,`token`,`body`,`method`,`type`,`updateTime`,`createTime`)
+		values
+        (
+			#{interfaceId}
+    	,	#{pin}
+    	,	#{name}
+    	,	#{url}
+    	,	#{head}
+    	,	#{ip}
+    	,	#{alias}
+    	,   #{token}
+    	,	#{body}
+    	,	#{method}
+    	,	#{type}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+
+	<delete id="delete">
+		delete from interface_collection where interfaceId = #{id}
+	</delete>
+
+	<update id="update" parameterType="interfaceCollection">
+		update interface_collection
+		<set>
+			`name` = #{name},
+			`url` = #{url},
+			`head`= #{head},
+			`body` = #{body},
+			`token` = #{token},
+			<if test="ip != null and ip!=''">`ip` = #{ip},</if>
+			<if test="alias != null and alias!=''">`alias` = #{alias},</if>
+			<if test="method != null and method!=''">`method` = #{method}, </if>
+			<if test="type !=null and type!=0">`type` = #{type}, </if>
+			`updateTime` = now()
+		</set>
+		where
+		`interfaceId` = #{interfaceId}
+	</update>
+
+
+</mapper>

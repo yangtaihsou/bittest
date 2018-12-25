@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.InterfaceHistoryMapper">
+    <sql id="whereSelectiveSql">
+		and `pin` = #{pin}
+		<if test="url!=null and url!=''">
+		and CASE
+		WHEN
+			type = '1'
+		THEN
+			CONCAT(url,'.', method)
+		ELSE
+			url
+		END  like
+			CONCAT('%',#{url},'%')
+		</if>
+    </sql>
+	<sql id="Base_Column_Obj">
+		id,pin,url,head,ip,alias,token,body,method,`type`
+	</sql>
+
+	<sql id="Base_Column_List">
+		interfaceId,url,method,`type`
+	</sql>
+
+	<select id="queryObject" resultType="interfaceHistory">
+		select <include refid="Base_Column_Obj" />
+		from
+			interface_history
+		where
+		   	id = #{id}
+	</select>
+
+	<select id="queryList" resultType="interfaceHistory">
+		select
+			CASE
+			WHEN
+			`type` = '1'
+			THEN
+				CONCAT(url,'.', method)
+			ELSE
+				url
+			END as url,
+			`type`,
+			`id`
+		from interface_history
+        where 1=1
+        <include refid="whereSelectiveSql" />
+		order by id desc
+	</select>
+
+ 	<select id="queryHistoryCount" resultType="interfaceHistory">
+		select count(1) as countNum,min(id) as maxId from interface_history
+        where 1=1
+         and `pin` = #{pin}
+	</select>
+
+	<insert id="save" parameterType="interfaceHistory" useGeneratedKeys="true" keyProperty="id">
+		insert into interface_history
+		(`pin`,`url`,`head`,`ip`,`alias`,`token`,`body`,`method`,`type`,`updateTime`,`createTime`)
+		values
+        (
+    		#{pin}
+    	,	#{url}
+    	,	#{head}
+    	,	#{ip}
+    	,	#{alias}
+    	,   #{token}
+    	,	#{body}
+    	,	#{method}
+    	,	#{type}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+
+	<delete id="delete">
+		delete from interface_history where `id` = #{id}
+	</delete>
+
+
+</mapper>

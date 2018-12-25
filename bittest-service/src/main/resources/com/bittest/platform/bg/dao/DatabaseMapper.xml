@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.DatabaseMapper">
+    <sql id="whereSelectiveSql">
+		<if test="databaseId != null and databaseId != '' "> and `databaseId` = #{databaseId}</if>
+		 and `pin` = #{pin}
+		<if test="url != null and url != '' "> and `url` = #{url}</if>
+		<if test="name != null and name != '' "> and `name` like concat('%',#{name},'%')</if>
+    </sql>
+	<sql id="Base_Column_List">
+		databaseId,url,name,username,password,remark,pin,createTime,updateTime
+	</sql>
+
+	<select id="queryObject" resultType="com.bittest.platform.bg.domain.po.DataBase">
+		select <include refid="Base_Column_List" /> from databaseinfo where databaseId = #{databaseId}
+	</select>
+
+	<select id="queryList" resultType="com.bittest.platform.bg.domain.po.DataBase">
+		select <include refid="Base_Column_List" /> from databaseinfo
+        where 1=1
+        <include refid="whereSelectiveSql" />
+		<if test="startNo!=null and  pageSize!=null">
+			limit #{startNo}, #{pageSize}
+		</if>
+	</select>
+
+
+	<select id="queryTotalList" resultType="com.bittest.platform.bg.domain.po.DataBase">
+		select <include refid="Base_Column_List" /> from databaseinfo
+		where 1=1
+		and pin = #{pin}
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(1) from databaseinfo
+        where 1=1
+        <include refid="whereSelectiveSql" />
+	</select>
+
+	<insert id="save" parameterType="com.bittest.platform.bg.domain.po.DataBase">
+		insert into databaseinfo
+		(
+			<include refid="Base_Column_List"/>
+		)
+		values
+        (
+			#{databaseId}
+    	,	#{url}
+    	,	#{name}
+		,   #{username}
+		,   #{password}
+    	,	#{remark}
+    	,	#{pin}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+	<update id="update" parameterType="com.bittest.platform.bg.domain.po.DataBase">
+		update databaseinfo
+		<set>
+			<if test="url != null">`url` = #{url}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="username != null">`username` = #{username}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			`updateTime`=now()
+		</set>
+		where databaseId = #{databaseId} and pin = #{pin}
+	</update>
+
+	<delete id="delete">
+		delete from databaseinfo where databaseId = #{databaseId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.TaskResultMapper">
+
+    <sql id="whereSelectiveSql">
+        <if test="resultId != null and resultId != '' ">and `resultId` = #{resultId} </if>
+        <if test="taskId != null and taskId != '' ">and `taskId` = #{taskId} </if>
+        <if test="isfinish != null and isfinish != 0 ">and `isfinish` = #{isfinish} </if>
+        and `pin` =#{pin}
+    </sql>
+    <sql id="Base_Column_List">
+        resultId,resultName,taskId,taskName,taskParam,pin,successRate,isfinish,updateTime,createTime
+    </sql>
+
+    <select id="queryObject" resultType="com.bittest.platform.bg.domain.po.TaskResult">
+        select
+        <include refid="Base_Column_List"/>
+        from task_result where resultId = #{resultId}
+    </select>
+
+    <select id="queryList" resultType="com.bittest.platform.bg.domain.po.TaskResult">
+        select
+        <include refid="Base_Column_List"/>
+        from task_result
+        where 1=1
+        <include refid="whereSelectiveSql"/>
+          order by id desc
+        <if test="startNo != null and  pageSize != null">
+            limit #{startNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from task_result
+        where 1=1
+        <include refid="whereSelectiveSql"/>
+    </select>
+
+    <insert id="save" parameterType="com.bittest.platform.bg.domain.po.TaskResult">
+		insert into task_result
+		(
+		  resultId,resultName,taskId,taskName,taskParam,pin,updateTime,createTime
+		)
+		values
+        (
+    	    #{resultId}
+    	,	#{resultName}
+    	,	#{taskId}
+    	,	#{taskName}
+    	,	#{taskParam}
+    	,	#{pin}
+        ,   now()
+    	,	now()
+    )
+	</insert>
+
+    <delete id="delete" parameterType="com.bittest.platform.bg.domain.po.TaskResult">
+		delete
+        from
+          task_result
+        where
+          1=1
+          and `resultId` = #{resultId}
+          and `pin` = #{pin}
+	</delete>
+
+    <delete id="deleteByTask" parameterType="com.bittest.platform.bg.domain.po.TaskResult">
+        delete
+        from
+          task_result
+        where
+          1=1
+          and `taskId` = #{taskId}
+          and `pin` = #{pin}
+    </delete>
+
+    <update id="update" parameterType="com.bittest.platform.bg.domain.po.TaskResult">
+        update task_result
+        <set>
+            <if test="successRate != null">`successRate` = #{successRate}, </if>
+            <if test="isfinish != null">`isfinish` = #{isfinish},</if>
+            updateTime = now()
+        </set>
+        where resultId = #{resultId}
+    </update>
+
+</mapper>

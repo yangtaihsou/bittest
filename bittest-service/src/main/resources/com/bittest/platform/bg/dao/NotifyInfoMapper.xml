@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.NotifyInfoMapper">
+
+
+
+
+    <!--根据条件，查找notifyinfo表相应数据-->
+    <select id="queryBySelective" parameterType="NotifyInfo"  resultType="NotifyInfo">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM notifyinfo where      <include refid="whereQuerySelectiveSql" /> 1=1
+    </select>
+
+    <!--根据条件，查找notifyinfo表相应数据的总量-->
+    <select id="queryCountBySelective" parameterType="NotifyInfo"  resultType="java.lang.Long">
+        SELECT
+        count(id )
+
+        FROM  notifyinfo  where <include refid="whereSelectiveSql" />  1=1
+    </select>
+
+
+    <!--根据主键id，查找notifyinfo表的唯一数据-->
+    <select id="queryByPrimaryKey" parameterType="Long"  resultType="NotifyInfo">
+
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM  notifyinfo  where  id = #{id}
+    </select>
+
+    <!--根据主键id，删除notifyinfo表的唯一数据-->
+    <delete id="deleteByPrimaryKey" parameterType="Long">
+        DELETE FROM notifyinfo WHERE id = #{id}
+    </delete>
+
+    <!--根据主键id，更新notifyinfo表相应数据-->
+    <update id="updateByPrimaryKey" parameterType="NotifyInfo">
+        UPDATE notifyinfo
+        <set>
+            <include refid="updateSetSql" />
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!--保存数据-->
+    <insert id="save" parameterType="NotifyInfo">
+        INSERT INTO notifyinfo
+        (
+        <include refid="Base_Column_List_WithOutPk" />
+        )
+        VALUES
+        (
+        <include refid="Javabean_Column_List_WithOutPk" />
+        )
+    </insert>
+
+    <!--根据条件，分页查找notifyinfo表相应数据-->
+    <select id="queryBySelectiveForPagination" parameterType="NotifyInfo"  resultType="NotifyInfo">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM notifyinfo where  <include refid="whereQuerySelectiveSql" />  1=1
+        order by id desc LIMIT #{pagination.startNo}, #{pagination.pageSize}
+    </select>
+
+
+
+
+
+    <select id="queryById"  parameterType="java.lang.Long"   resultType="NotifyInfo" >
+        SELECT
+        <include refid="Base_Column_List" /> FROM notifyinfo WHERE      id=#{id} and   1=1
+    </select>
+
+    <update id="updateById" parameterType="NotifyInfo" >
+        UPDATE notifyinfo
+        <set>
+            <include refid="updateSetSql" />
+        </set>
+        WHERE       id=#{id} and   1=1
+    </update>
+
+    <select id="queryByFieldId"  parameterType="java.lang.String"   resultType="NotifyInfo" >
+        SELECT
+        <include refid="Base_Column_List" /> FROM notifyinfo WHERE      fieldId=#{fieldId} and   1=1
+    </select>
+
+    <update id="updateByUUID" parameterType="NotifyInfo" >
+        UPDATE notifyinfo
+        <set>
+            <include refid="updateSetSql" />
+        </set>
+        WHERE       sysCode=#{sysCode} and  fieldKey=#{fieldKey} and fieldId=#{fieldId}
+    </update>
+
+
+
+
+
+    <!--根据条件，查找notifyinfo表相应数据-->
+    <select id="queryByUUID" parameterType="NotifyInfo"  resultType="NotifyInfo">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM notifyinfo where      <include refid="whereSelectiveSql" /> 1=1
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from notifyinfo
+        where
+        <include refid="whereSelectiveSql"/> 1=1
+    </select>
+
+
+    <!--notifyinfo表所有字段-->
+    <sql id="Base_Column_List">
+        id  ,   <!---->
+        sysCode  ,   <!---->
+        fieldKey  ,   <!---->
+        fieldId  ,   <!---->
+        context  ,   <!---->
+        updateTime  ,   <!---->
+        createTime     <!---->
+    </sql>
+
+    <!--notifyinfo表除了主键id的所有字段-->
+    <sql id="Base_Column_List_WithOutPk">
+        sysCode      ,  <!---->
+        fieldKey      ,  <!---->
+        fieldId      ,  <!---->
+        context      ,  <!---->
+        updateTime      ,  <!---->
+        createTime        <!---->
+    </sql>
+
+    <!--javabean除了主键id的所有字段-->
+    <sql id="Javabean_Column_List_WithOutPk">
+        #{sysCode} ,                     <!---->
+        #{fieldKey} ,                     <!---->
+        #{fieldId} ,                     <!---->
+        #{context} ,                     <!---->
+        now() ,                     <!---->
+        now()                 <!---->
+    </sql>
+
+
+    <sql id="updateSetSql">
+        <if test="id != null">
+            id=#{id},
+        </if>
+        <if test="sysCode != null">
+            sysCode=#{sysCode},
+        </if>
+        <if test="fieldKey != null">
+            fieldKey=#{fieldKey},
+        </if>
+        <if test="fieldId != null">
+            fieldId=#{fieldId},
+        </if>
+        <if test="context != null">
+            context=#{context},
+        </if>
+        updateTime=now()
+    </sql>
+
+
+    <sql id="whereQuerySelectiveSql">
+        <if test="query!= null">
+            <if test="query.id != null">
+                id = #{query.id} and
+            </if>
+
+            <if test="query.sysCode != null and query.sysCode!=''">
+                sysCode = #{query.sysCode}  and
+            </if>
+
+            <if test="query.fieldKey != null and query.fieldKey!=''">
+                fieldKey = #{query.fieldKey}  and
+            </if>
+
+            <if test="query.fieldId != null and query.fieldId!=''">
+                fieldId = #{query.fieldId}  and
+            </if>
+
+            <if test="query.context != null and query.context!=''">
+                context = #{query.context}  and
+            </if>
+
+            <if test="query.updateTime != null">
+                updateTime = #{query.updateTime} and
+            </if>
+
+            <if test="query.createTime != null">
+                createTime = #{query.createTime} and
+            </if>
+
+        </if>
+    </sql>
+
+    <sql id="whereSelectiveSql">
+
+        <if test="id != null">
+            id = #{id} and
+        </if>
+
+        <if test="sysCode != null and sysCode!=''">
+            sysCode = #{sysCode}  and
+        </if>
+
+        <if test="fieldKey != null and fieldKey!=''">
+            fieldKey = #{fieldKey}  and
+        </if>
+
+        <if test="fieldId != null and fieldId!=''">
+            fieldId = #{fieldId}  and
+        </if>
+
+        <if test="context != null and context!=''">
+            context = #{context}  and
+        </if>
+
+        <if test="updateTime != null">
+            updateTime = #{updateTime} and
+        </if>
+
+        <if test="createTime != null">
+            createTime = #{createTime} and
+        </if>
+
+
+    </sql>
+</mapper>

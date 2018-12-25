@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.InterfaceMapper">
+    <sql id="whereSelectiveSql">
+		<if test="pin != null and pin != '' ">  and `pin` = #{pin} </if>
+		<if test="interfaceId != null and interfaceId != '' "> and `interfaceId` = #{interfaceId}</if>
+		<if test="name!=null and name!=''"> and `name` like concat('%',#{name},'%') </if>
+		<if test="type!=null and type!=0"> and `type`=#{type}</if>
+    </sql>
+	<sql id="Base_Column_List">
+		id,interfaceId,pin,name,url,head,ip,alias,token,body,method,type,dataFetch,dataCheckPoint,checkPoint,remark,updateTime,createTime	</sql>
+
+	<select id="queryObject" resultType="interfaceInfo">
+		select <include refid="Base_Column_List" />
+		from
+			interface
+		where
+		   	interfaceId = #{interfaceId}
+	</select>
+
+	<select id="queryList" resultType="interfaceInfo">
+		select
+			<include refid="Base_Column_List" />
+		from interface
+        where 1=1
+        <include refid="whereSelectiveSql" />
+		<if test="startNo != null and  pageSize != null">
+			limit #{startNo}, #{pageSize}
+		</if>
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(1) from interface
+        where 1=1
+        <include refid="whereSelectiveSql" />
+	</select>
+
+	<insert id="save" parameterType="interfaceInfo" useGeneratedKeys="true" keyProperty="id">
+		insert into interface
+		(`interfaceId`,`pin`,`name`,`url`,`head`,`ip`,`alias`,`token`,`body`,`method`,`type`,`dataFetch`,`dataCheckPoint`,`checkPoint`,`remark`,`updateTime`,`createTime`)
+		values
+        (
+			#{interfaceId}
+    	,	#{pin}
+    	,	#{name}
+    	,	#{url}
+    	,	#{head}
+    	,	#{ip}
+    	,	#{alias}
+    	,   #{token}
+    	,	#{body}
+    	,	#{method}
+    	,	#{type}
+    	,   #{dataFetch}
+    	,   #{dataCheckPoint}
+    	,   #{checkPoint}
+    	,	#{remark}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+	<update id="update" parameterType="interfaceInfo">
+		update interface
+			<set>
+				<if test="name != null">`name` = #{name}, </if>
+				<if test="url != null">`url` = #{url}, </if>
+				`head`= #{head},
+				`ip` = #{ip},
+				`alias` = #{alias},
+				`token` = #{token},
+				<if test="body != null">`body` = #{body}, </if>
+				<if test="method != null">`method` = #{method}, </if>
+				<if test="type != null">`type` = #{type}, </if>
+				`dataFetch`=#{dataFetch},
+				`dataCheckPoint`=#{dataCheckPoint},
+				`checkPoint`=#{checkPoint},
+				`remark` = #{remark},
+				`updateTime` = now()
+			</set>
+		where
+			`interfaceId` = #{interfaceId}
+	</update>
+
+	<delete id="delete">
+		delete from interface where `interfaceId` = #{interfaceId}
+	</delete>
+
+	<select id="queryInterfaceByCase" resultType="com.bittest.platform.bg.domain.po.InterfaceInfo" >
+		select
+		r.caseId as caseId,
+		r.interfaceId as interfaceId,
+		interfaceOrder,
+		name,
+		url,
+		head,
+		ip,
+		alias,
+		token,
+		body,
+		method,
+		type,
+		dataFetch,
+		checkPoint,
+		dataCheckPoint,
+		pin,
+		r.status as status
+		from case_interface_relastion r,interface i
+		where
+		r.interfaceId=i.interfaceId
+		and r.caseId = #{caseId}
+		<if test="status!=null and status!=0">
+			and r.status=#{status}
+		</if>
+		order by r.interfaceOrder asc
+	</select>
+
+	<select id="queryAllInterfaceList" resultType="com.bittest.platform.bg.domain.po.InterfaceInfo">
+		SELECT
+			i.interfaceId,
+			i.`name`,
+			i.type,
+			i.url,
+			(
+				SELECT
+					caseName
+				FROM
+					caseinfo
+				WHERE
+					c.caseId = caseId
+			) AS caseName,
+			i.updateTime,
+			i.createTime
+		FROM
+			interface i
+		LEFT JOIN case_interface_relastion c ON i.interfaceId = c.interfaceId
+		where 1=1
+			<include refid="whereSelectiveSql"/>
+
+		order by i.id desc
+			<if test="startNo != null and  pageSize != null">
+				limit #{startNo}, #{pageSize}
+			</if>
+	</select>
+
+	<select id="queryAllInterfaceListCount" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			interface i
+		LEFT JOIN
+			case_interface_relastion c ON i.interfaceId = c.interfaceId
+		where 1=1
+			<include refid="whereSelectiveSql"/>
+	</select>
+
+	<select id="queryInterfaceByDataBaseCount" resultType="int" parameterType="string">
+		SELECT
+		count(1)
+		FROM
+			interface
+		where
+			 `dataCheckPoint` like concat('%,"databaseId":"',#{value},'",%')
+	</select>
+
+</mapper>

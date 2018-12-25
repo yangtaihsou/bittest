@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.InterfaceResultMapper">
+
+    <sql id="whereSelectiveSql">
+        <if test="resultId != null and resultId != '' ">and `resultId` = #{resultId} </if>
+        <if test="caseId != null and caseId != '' ">and `caseId` = #{caseId} </if>
+        <if test="result != null and result != 0 ">and `result` = #{result} </if>
+        <if test="name != null and name != '' ">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        and `pin` = #{pin}
+    </sql>
+    <sql id="Base_Column_List">
+        id,resultId,caseId,interfaceId,pin,name,url,head,ip,alias,token,body,method,type,dataFetch,dataCheckPoint,checkPoint,resBody,result,resultCode,createTime
+    </sql>
+
+    <select id="queryObject" resultType="com.bittest.platform.bg.domain.po.InterfaceResult">
+        select
+        <include refid="Base_Column_List"/>
+        from interface_result where resultId = #{resultId}  and caseId = #{caseId} and interfaceId =#{interfaceId}
+    </select>
+
+    <select id="queryList" resultType="com.bittest.platform.bg.domain.po.InterfaceResult">
+        select
+          `id`,`resultId`,`caseId`,`interfaceId`,`name`,`url`,`type`,`result`,`createTime`
+        from interface_result
+        where 1=1
+        <include refid="whereSelectiveSql"/>
+        <if test="startNo != null and  pageSize != null">
+            limit #{startNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from interface_result
+        where 1=1
+        <include refid="whereSelectiveSql"/>
+    </select>
+
+    <insert id="save" parameterType="com.bittest.platform.bg.domain.po.InterfaceResult">
+		insert into interface_result
+		(
+		   `resultId`,`taskId`,`caseId`,`interfaceId`,`pin`,`name`,`url`,`head`,`ip`,`alias`,`token`,`body`,`method`,`type`,`dataFetch`,`dataCheckPoint`,`checkPoint`,`resBody`,`result`,`resultCode`,`createTime`
+		)
+		values
+        (
+    	    #{resultId}
+    	,   #{taskId}
+    	,	#{caseId}
+    	,	#{interfaceId}
+    	,	#{pin}
+    	,   #{name}
+    	,	#{url}
+    	,   #{head}
+    	,	#{ip}
+    	,   #{alias}
+    	,   #{token}
+    	,	#{body}
+    	,	#{method}
+    	,	#{type}
+    	,	#{dataFetch}
+    	,	#{dataCheckPoint}
+    	,	#{checkPoint}
+    	,	#{resBody}
+    	,	#{result}
+    	,	#{resultCode}
+    	,	now()
+    )
+	</insert>
+
+    <delete id="delete" parameterType="com.bittest.platform.bg.domain.po.InterfaceResult">
+		delete
+        from
+          interface_result
+        where
+          1=1
+          and `resultId` = #{resultId}
+          and `pin` = #{pin}
+	</delete>
+
+    <delete id="deleteByTask" parameterType="com.bittest.platform.bg.domain.po.InterfaceResult">
+        delete
+        from
+          interface_result
+        where
+          1=1
+          and `taskId` = #{taskId}
+          and `pin` = #{pin}
+    </delete>
+
+</mapper>

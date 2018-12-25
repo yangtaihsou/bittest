@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bittest.platform.bg.dao.CaseInterfaceRelastionMapper">
+
+    <sql id="whereSelectiveSql">
+		<if test="caseId != null and caseId != '' "> and `caseId` = #{caseId}</if>
+		<if test="interfaceId != null and interfaceId != '' "> and `interfaceId` = #{interfaceId}</if>
+    </sql>
+	<sql id="Base_Column_List">
+		id,caseId,interfaceId,interfaceOrder,status,updateTime,createTime
+	</sql>
+
+	<select id="queryRelationOrder" parameterType="com.bittest.platform.bg.domain.po.CaseInterfaceRelastion" resultType="int">
+		select
+			ifnull(max(interfaceorder),0)
+		from
+			case_interface_relastion
+		where
+			caseId=#{caseId}
+	</select>
+
+	<select id="queryInterfaceCount" parameterType="com.bittest.platform.bg.domain.po.CaseInterfaceRelastion" resultType="int">
+		select
+			count(1)
+		from
+			case_interface_relastion
+		WHERE
+			interfaceId = #{interfaceId}
+	</select>
+
+	<insert id="save" parameterType="com.bittest.platform.bg.domain.po.CaseInterfaceRelastion" useGeneratedKeys="true" keyProperty="id">
+		insert into case_interface_relastion
+		(`caseId`,`interfaceId`,`interfaceOrder`,`updateTime`,`createTime`)
+		values
+        (
+			#{caseId}
+    	,	#{interfaceId}
+    	,	#{interfaceOrder}
+    	,	now()
+    	,	now()
+    )
+	</insert>
+
+	<update id="update" parameterType="com.bittest.platform.bg.domain.po.CaseInterfaceRelastion">
+		update case_interface_relastion
+		<set>
+			<if test="interfaceOrder != null">`interfaceOrder` = #{interfaceOrder}, </if>
+			<if test="status != null and status != 0">`status` = #{status}, </if>
+			<if test="updateTime != null">`updateTime` = #{updateTime} </if>
+		</set>
+		where caseId = #{caseId} and interfaceId = #{interfaceId}
+	</update>
+
+	<delete id="delete">
+		delete from case_interface_relastion where caseId = #{caseId} and interfaceId = #{interfaceId}
+	</delete>
+
+	<delete id="deleteByCase">
+		delete from case_interface_relastion where caseId = #{caseId}
+	</delete>
+
+</mapper>
