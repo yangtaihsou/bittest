@@ -32,8 +32,7 @@ public class EmailUtil {
     
     private static boolean send(String subject, String recipients, String message, String type) {
     		try {
-            Client client = ClientBuilder.newClient();
-            client.register(HttpAuthenticationFeature.basic("api", "key-9677e36228a0c5c4ec5b1d87a3d57162"));
+            Client client = ClientBuilder.newClient(); 
 
             WebTarget mgRoot = client.target("https://api.mailgun.net/v3");
 

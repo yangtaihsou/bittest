@@ -13,19 +13,7 @@ import javax.ws.rs.core.MediaType;
 public class MailgunTest {
     @Test
     public void testMailSend(){
-        Client client = Client.create();
-        client.addFilter(new HTTPBasicAuthFilter("api", "key-9677e36228a0c5c4ec5b1d87a3d57162"));
-        WebResource webResource = client.resource("https://api.mailgun.net/v3");
-        MultivaluedMapImpl formData = new MultivaluedMapImpl();
-        formData.add("from", "No-Reply <kuan.yang@bittest123.com>");
-        formData.add("to", "yangtaishou <yangkuan@yeah.net>");
-        formData.add("subject", "Hello yangtaishou bittest123");
-        formData.add("text", "Congratulations yangtaishou, you just sent an email with Mailgun!  You are truly awesome!");
-        ClientResponse response =   webResource.path("/bittest123.com/messages")
-                .type(MediaType.APPLICATION_FORM_URLENCODED)
-                .post(ClientResponse.class, formData);
-          System.out.println("----"+ JSON.toJSONString(response));
-        System.out.println("----"+ response.getStatus());
+
 
     }
 
